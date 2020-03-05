@@ -1,0 +1,19 @@
+/* Media queries breakpoint mixins */
+
+@mixin for-narrow-layout {
+    @media (max-width: $break-narrow) {
+        @content;
+    }
+}
+
+@mixin for-med-layout {
+    @media (max-width: $break-med) {
+        @content;
+    }
+}
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,21 @@
+.header {
+    background-color: $neutralLight;
+    .logo {
+        color: $brandClr;
+        font-style: italic;
+        font-size: 28px;
+    }
+    nav {
+        width: 300px;
+        a {
+            color: $secondaryDark;
+            height: 70px;
+            padding: 0 10px;
+            @include flex-center;
+            cursor: pointer;
+        }
+        .router-link-active {
+            color: $brandClr;
+        }
+    }
+}
