@@ -10,6 +10,13 @@
         .date {
             font-size: 0.8em;
         }
+        &.arrow {
+            background-color: transparent;
+            align-self: flex-start;
+            font-size: rem(20px);
+            color: lighten($secondaryDark, 15%);
+            cursor: pointer;
+        }
     }
     .cell {
         height: rem(50px);
@@ -18,11 +25,10 @@
         cursor: pointer;
         background-color: lighten($brandClr, 48%);
         @include flex-center;
-        transition: background-color .3s
+        transition: background-color 0.3s;
     }
     .unavail {
         cursor: default;
         background-color: lighten($secondaryLight, 5%);
     }
 }
-

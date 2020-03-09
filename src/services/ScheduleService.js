@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 export default {
-    getWeeklyAvail,
-    getHoursBetween
+    getWeeklyAvails,
+    getWeeklyHours
 }
 
 const user = {
@@ -30,40 +30,53 @@ const user = {
             }
         ],
         special: {
-            '12/02/20': {
-                startHour: '08:00',
-                endHour: '13:00'
-            }
+            '11/03/20': [
+                {
+                    startHour: '08:00',
+                    endHour: '13:00'
+                }
+            ],
         }
     }
 }
 
 const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
-function getWeeklyAvail() {
-    const userAvail = {}
+function getWeeklyHours() {
+    return _getHoursBetween(user.avail.startHour, user.avail.endHour, user.meetingLength)
+}
+
+function getWeeklyAvails(weekCnt) {
+    const weeklyAvails = []
     weekdays.forEach(day => {
-        if (!user.unavail.hasOwnProperty(day)) userAvail[day] = []
-        else {
-            const hours = [];
-            var currHour = moment(user.avail.startHour, 'HH:mm')
-            console.log('currHour', currHour);
-            const endHour = moment(user.avail.endHour, 'HH:mm')
-            // while (currHour <= endHour) {
-            //     hours.push(currHour)
-            //     currHour = moment(currHour, 'HH:mm').add(user.meetingLength, 'minute').format('hh:mm')
-            // }
-            userAvail[day] = hours
+        let date = moment().day(day).add(weekCnt, 'week').format('DD/MM/YY')
+        let avail = { dayName: day, hours: [], date }
+        let isWorkingDay = user.unavail.hasOwnProperty(day)
+        let isSpecialDate = user.unavail.special.hasOwnProperty(date)
+        if (isWorkingDay || isSpecialDate) {
+            let unavails = []
+            if (isWorkingDay) unavails.push(...user.unavail[day])
+            if (isSpecialDate) unavails.push(...user.unavail.special[date])
+            let currStart = user.avail.startHour
+            unavails.forEach(period => {
+                avail.hours.push(..._getHoursBetween(currStart, period.startHour, user.meetingLength))
+                currStart = period.endHour
+            })
+            avail.hours.push(..._getHoursBetween(currStart, user.avail.endHour, user.meetingLength))
         }
+        weeklyAvails.push(avail)
     })
-    console.log('userAvail', userAvail);
+    return Promise.resolve(weeklyAvails);
 }
 
-function getHoursBetween(startHour, endHour) {
-    const weeklyHours = [];
-    const endTimestamp = moment(endHour, 'HH:mm').unix()
-    // var currHour = 
-    return endTimestamp
+function _getHoursBetween(startHour, endHour, minuteGap) {
+    const hours = [];
+    const endNumericHour = moment(endHour, 'HH:mm').hours() * 60 + moment(endHour, 'HH:mm').minutes()
+    var currHour = moment(startHour, 'HH:mm').format('HH:mm')
+    while (moment(currHour, 'HH:mm').minutes() + moment(currHour, 'HH:mm').hours() * 60 <= endNumericHour - minuteGap) {
+        hours.push(currHour);
+        currHour = moment(currHour, 'HH:mm').add(minuteGap, 'minute').format('HH:mm')
+    }
+    return hours
 }
 
-console.log('res:', getHoursBetween(user.avail.startHour, user.avail.endHour));
