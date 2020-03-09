@@ -3,7 +3,7 @@
         class="calendar container flex space-around align-center"
         v-if="weeklyAvails && weeklyHours"
     >
-        <div class="arrow header flex-center">◄</div>
+        <div class="arrow header flex-center" @click="updateWeek(-1)">◄</div>
         <div class="column" v-for="(day, idx) in weeklyAvails" :key="idx">
             <div class="header bold flex space-between align-center column">
                 <div>{{day.dayName}}</div>
@@ -15,7 +15,7 @@
                 :key="idx"
             >{{hour}}</div>
         </div>
-        <div class="arrow header flex-center">►</div>
+        <div class="arrow header flex-center" @click="updateWeek(1)">►</div>
     </section>
 </template>
 
@@ -27,7 +27,7 @@ export default {
         }
     },
     async created() {
-        await this.$store.dispatch({ type: 'loadWeeklyAvails', weekCnt: this.currWeek });
+        await this.loadWeeklyAvails()
         await this.$store.dispatch('loadWeeklyHours');
     },
     computed: {
@@ -42,6 +42,14 @@ export default {
         checkIfUnavail(day, hour) {
             if (!day.hours) return true;
             return day.hours.indexOf(hour) === -1;
+        },
+        async loadWeeklyAvails() {
+            await this.$store.dispatch({ type: 'loadWeeklyAvails', weekCnt: this.currWeek });
+        },
+        async updateWeek(dif) {
+            this.currWeek += dif;
+            if (this.currWeek < 0) return
+            await this.loadWeeklyAvails()
         }
     },
 }

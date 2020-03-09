@@ -36,6 +36,18 @@ const user = {
                     endHour: '13:00'
                 }
             ],
+            '19/03/20': [
+                {
+                    startHour: '14:00',
+                    endHour: '17:00'
+                }
+            ],
+            '22/03/20': [
+                {
+                    startHour: '11:30',
+                    endHour: '14:00'
+                }
+            ],
         }
     }
 }
@@ -49,11 +61,13 @@ function getWeeklyHours() {
 function getWeeklyAvails(weekCnt) {
     const weeklyAvails = []
     weekdays.forEach(day => {
-        let date = moment().day(day).add(weekCnt, 'week').format('DD/MM/YY')
+        let date = moment().day(day).add(weekCnt, 'week')
+        let hasPassed = moment(moment()).isAfter(date, 'time')
+        date = moment(date).format('DD/MM/YY')
         let avail = { dayName: day, hours: [], date }
         let isWorkingDay = user.unavail.hasOwnProperty(day)
         let isSpecialDate = user.unavail.special.hasOwnProperty(date)
-        if (isWorkingDay || isSpecialDate) {
+        if (!hasPassed && (isWorkingDay || isSpecialDate)) {
             let unavails = []
             if (isWorkingDay) unavails.push(...user.unavail[day])
             if (isSpecialDate) unavails.push(...user.unavail.special[date])
