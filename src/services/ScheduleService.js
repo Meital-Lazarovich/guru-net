@@ -5,6 +5,8 @@ export default {
     getWeeklyHours
 }
 
+const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+
 const user = {
     meetingLength: 60,
     avail: {
@@ -51,8 +53,6 @@ const user = {
         }
     }
 }
-
-const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
 function getWeeklyHours() {
     return _getHoursBetween(user.avail.startHour, user.avail.endHour, user.meetingLength)
